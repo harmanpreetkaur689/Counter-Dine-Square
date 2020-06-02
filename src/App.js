@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React, { Component } from 'react';
 import {
   HashRouter as Router,
   Switch,
@@ -19,12 +19,13 @@ import AddBalance from './components/AddBalance'
 import Vendorcartpage from "./components/vendorcartpage"
 
 
-class App extends Component{
+class App extends Component {
   state = {
     userData: null,
     uid: null,
     username: null,
-    users: {}
+    users: {},
+    vendor: null
   };
   fetchUserData = () => {
     this.props.firebase.auth.onAuthStateChanged((authUser) => {
@@ -40,10 +41,12 @@ class App extends Component{
         .ref("users/" + this.state.userData.uid)
         .once("value")
         .then((snapshot) => {
+          const data = snapshot.val()
           const user =
             (snapshot.val() && snapshot.val().username) || "Anonymous";
+
           if (this.state.username != user) {
-            this.setState({ username: user });
+            this.setState({ username: user, vendor: data.vendor });
           }
         });
     }
@@ -58,13 +61,38 @@ class App extends Component{
     this.fetchUserData();
   }
   render() {
-    return (
-      <Router basename="/">
+    if (this.state.username == "admin")
+      return (
+        <Router basename="/">
+          <div>
+            <Navbar user={this.state.userData} username={this.state.username} />
+
+            <Switch>
+              <Route path="/Login">
+                <Login />
+              </Route>
+              <Route path="/SignUp">
+                <SignUp />
+              </Route>
+              <Route path="/AddBalance">
+                <AddBalance />
+              </Route>
+              <Route path="/">
+                <Login />
+              </Route>
+            </Switch>
+
+
+
+
+          </div>
+        </Router>
+      );
+    else {
+      return (<Router basename="/">
         <div>
           <Navbar user={this.state.userData} username={this.state.username} />
           <Switch>
-            
-            
             <Route path="/Login">
               <Login />
             </Route>
@@ -74,20 +102,16 @@ class App extends Component{
             <Route path="/AddItems">
               <AddItems />
             </Route>
-            <Route path="/AddBalance">
-              <AddBalance />
-            </Route>
             <Route path="/vendorcart">
-              <Vendorcartpage />
+              <Vendorcartpage vendor={this.state.vendor} />
             </Route>
             <Route path="/">
               <Login />
             </Route>
-          </Switch>
-        </div>
-      </Router>
-    );
+          </Switch> </div>
+      </Router>);
+    }
   }
-} 
+}
 
 export default withFirebase(App);
