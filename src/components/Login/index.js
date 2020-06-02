@@ -29,7 +29,7 @@ class SignInFormBase extends Component {
                 console.log("AUTH USER");
                 //console.log(authUser);
                 this.setState({ error: null });
-                this.props.history.push("/AddItems");
+                this.props.history.push("/vendorcart");
             })
             .catch(error => {
                 this.setState({ error });
@@ -78,12 +78,118 @@ class SignInFormBase extends Component {
     }
 }
 
+class SignInGoogleBase extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { error: null };
+    }
+    onSubmit = event => {
+        this.props.firebase
+            .doSignInWithGoogle()
+            .then(socialAuthUser => {
+                return this.props.firebase.user(socialAuthUser.user.uid).set({
+                    username: socialAuthUser.user.displayName,
+                    email: socialAuthUser.user.email,
+                    roles: {}
+                });
+            })
+            .then(() => {
+                this.setState({ error: null });
+            })
+            .catch(error => {
+                this.setState({ error });
+            });
 
+        event.preventDefault();
+    };
+    render() {
+        const { error } = this.state;
+        return (
+            <form onSubmit={this.onSubmit}>
+                <button class="btn btn-primary my-2" type="submit">
+                    Sign In with Google
+        </button>
+                {error && <p>{error.message}</p>}
+            </form>
+        );
+    }
+}
 
+class SignInFacebookBase extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { error: null };
+    }
+    onSubmit = event => {
+        this.props.firebase
+            .doSignInWithFacebook()
+            .then(socialAuthUser => {
+                return this.props.firebase.user(socialAuthUser.user.uid).set({
+                    username: socialAuthUser.additionalUserInfo.profile.name,
+                    email: socialAuthUser.additionalUserInfo.profile.email,
+                    roles: {}
+                });
+            })
+            .then(() => {
+                this.setState({ error: null });
+            })
+            .catch(error => {
+                this.setState({ error });
+            });
+        event.preventDefault();
+    };
+    render() {
+        const { error } = this.state;
+        return (
+            <form onSubmit={this.onSubmit}>
+                <button class="btn btn-primary my-2" type="submit">
+                    Sign In with Facebook
+        </button>
+                {error && <p>{error.message}</p>}
+            </form>
+        );
+    }
+}
 
+class SignInTwitterBase extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { error: null };
+    }
+    onSubmit = event => {
+        this.props.firebase
+            .doSignInWithTwitter()
+            .then(socialAuthUser => {
+                return this.props.firebase.user(socialAuthUser.user.uid).set({
+                    username: socialAuthUser.additionalUserInfo.profile.name,
+                    email: socialAuthUser.additionalUserInfo.profile.email,
+                    roles: {}
+                });
+            })
+            .then(() => {
+                this.setState({ error: null });
+            })
+            .catch(error => {
+                this.setState({ error });
+            });
+        event.preventDefault();
+    };
+    render() {
+        const { error } = this.state;
+        return (
+            <form onSubmit={this.onSubmit}>
+                <button class="btn btn-primary my-2" type="submit">
+                    Sign In with Twitter
+        </button>
+                {error && <p>{error.message}</p>}
+            </form>
+        );
+    }
+}
 
-
+const SignInTwitter = withFirebase(SignInTwitterBase);
+const SignInFacebook = withFirebase(SignInFacebookBase);
 const SignInForm = withRouter(withFirebase(SignInFormBase));
-
+const SignInGoogle = withFirebase(SignInGoogleBase);
 export default SignIn;
-export { SignInForm };
+export { SignInForm, SignInGoogle, SignInFacebook };

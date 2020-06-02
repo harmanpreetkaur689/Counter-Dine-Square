@@ -11,10 +11,14 @@ import { withFirebase } from "./components/Firebase";
 
 import Navbar from "./components/navbar";
 import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 import logo from './logo.svg';
 import './App.css';
 import AddItems from './components/AddItems';
 import AddBalance from './components/AddBalance'
+import Vendorcartpage from "./components/vendorcartpage"
+
+
 class App extends Component{
   state = {
     userData: null,
@@ -64,12 +68,17 @@ class App extends Component{
             <Route path="/Login">
               <Login />
             </Route>
-            
+            <Route path="/SignUp">
+              <SignUp />
+            </Route>
             <Route path="/AddItems">
               <AddItems />
             </Route>
             <Route path="/AddBalance">
               <AddBalance />
+            </Route>
+            <Route path="/vendorcart">
+              <Vendorcartpage />
             </Route>
             <Route path="/">
               <Login />

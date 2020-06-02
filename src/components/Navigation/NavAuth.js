@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-//import { HashRouter as Router, Switch, Route } from "react-router-dom";
-//import Firebase from "./components/Firebase";
-//import { Link } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
+import Firebase from "../Firebase";
+import { Link } from 'react-router-dom';
 import SignOut from '../SignOut';
 
 
@@ -10,9 +10,13 @@ class NavAuth extends Component {
         //console.log(this.props.firebase);
     }
     render() {
+        let location = "/profile";
         return (
             <div>
-                <button className="btn btn-dark disabled">{this.props.username}</button>
+                <Link
+                    to={location}>
+                    <button className="btn btn-dark ">{this.props.username}</button>
+                </Link>
                 <SignOut />
 
             </div>

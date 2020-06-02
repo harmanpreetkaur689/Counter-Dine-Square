@@ -24,6 +24,8 @@ class Firebase {
     this.functions = app.functions();
     this.filterItems = this.functions.httpsCallable("filterItems");
     this.addToCart = this.functions.httpsCallable("addToCart");
+    this.showCart = this.functions.httpsCallable("showCart");
+
   }
   doCreateUserWithEmailAndPassword = (email, password) =>
     this.auth.createUserWithEmailAndPassword(email, password);
