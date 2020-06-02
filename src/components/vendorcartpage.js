@@ -58,6 +58,7 @@ class Vendorcartpage extends Component {
     }
 
     render() {
+        
         return (
             <div class="container ">
                 {/* <div>
@@ -79,6 +80,8 @@ class Vendorcartpage extends Component {
                 </div>
             </div>
         );
+       
+        
     }
 }
 

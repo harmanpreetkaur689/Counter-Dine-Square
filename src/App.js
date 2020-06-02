@@ -72,7 +72,8 @@ class App extends Component{
               <SignUp />
             </Route>
             <Route path="/AddItems">
-              <AddItems />
+              {(this.state.username)?<AddItems user={this.state.userData} username={this.state.username}/>:<div>Loading...</div>}
+              
             </Route>
             <Route path="/AddBalance">
               <AddBalance />
@@ -81,7 +82,7 @@ class App extends Component{
               <Vendorcartpage />
             </Route>
             <Route path="/">
-              <Login />
+                <Login />
             </Route>
           </Switch>
         </div>
