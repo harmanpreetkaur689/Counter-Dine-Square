@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { withFirebase } from "./Firebase";
+import Login from "./Login"
 //import "./addItems.css";
 
 /**
@@ -31,6 +32,7 @@ class AddItems extends Component {
     selectedCategories: [], //Selected Categories
     searchedCategories: [], //Currently Searched Categories
     allCategories: [], //All Categories
+    username:null
   };
   addToSelectedPrices = (item) => {
     var unselectedSizes = this.state.unselectedSizes;
@@ -104,7 +106,7 @@ class AddItems extends Component {
       alert("Check Data");
     }
   };
-  changeVendor = (vendor) => {
+  /*changeVendor = (vendor) => {
     //change vendor here
     this.setState({ selectedVendor: vendor });
     //var vendors = this.state.vendors;
@@ -112,8 +114,16 @@ class AddItems extends Component {
     //  vendors.push(this.state.selectedVendor);
     // }
     //this.setState({ selectedVendor: vendor, vendors: vendors });
-  };
+  };*/
+  componentDidUpdate(){
+    console.log(this.props)
+    if(this.state.username!=this.props.username) {
+    this.setState({username:this.props.username})
+  }}
   componentDidMount() {
+    if(this.state.username!=this.props.username) {
+      this.setState({username:this.props.username,selectedVendor:this.props.username})
+    }
     this.fetchData();
   }
   dataListener = () => {
@@ -129,11 +139,17 @@ class AddItems extends Component {
         allCategories.push({ id: key, value: res["menuCategories"][key] });
       });
 
+      console.log(this.props)
       var vendors = [];
+      console.log(res["vendors"]);
       Object.keys(res["vendors"]).forEach((key) => {
+        if(this.state.username==res["vendors"][key]["name"])
+        {
         //vendors.push(value);
         //vendors[key] = res["vendors"][key];
         vendors.push({ id: key, value: res["vendors"][key] });
+       
+        }
       });
 
       var allSizes = [];
@@ -297,7 +313,7 @@ class AddItems extends Component {
       var itemData = {
         name: name,
         veg: veg,
-        vendor: vendor["value"]["name"],
+        vendor: vendor,
         price: prices,
         menuCategories: menuCategories,
       };
@@ -335,7 +351,8 @@ class AddItems extends Component {
                 <div className="col-3">sizes</div>
               </div>
               {Object.keys(this.state.items).map((item) => {
-                return (
+                return(
+                  (this.state.username==this.state.items[item]["value"]["vendor"])?
                   <div className="card ">
                     <div className="card-body d-flex bg-white text-dark border-top py-1">
                       <div className="col-4 font-weight-bold">
@@ -392,7 +409,8 @@ class AddItems extends Component {
                         })}
                       </div>
                     </div>
-                  </div>
+                  </div>:<div>
+                    </div>
                 );
               })}
             </div>
@@ -426,7 +444,7 @@ class AddItems extends Component {
     if (this.state.selectedVendor != null) {
       return (
         <button className="btn btn-primary m-1">
-          {this.state.selectedVendor["value"]["name"]}
+          {this.state.selectedVendor}
         </button>
       );
     }
@@ -445,6 +463,7 @@ class AddItems extends Component {
   };
 
   render() {
+    
     return (
       <div className="row col-12 my-2">
         {/**
@@ -480,21 +499,19 @@ class AddItems extends Component {
               </div>
               {/* -----vendors here----- */}
               <div className="border-top mt-2">
-                <div className="font-weight-bold">
+               {/* <div className="font-weight-bold">
                   Vendor{this.showSelectedVendor()}
-                </div>
+                </div>*/}
                 {
                   //this.showVendors()
-                  this.state.vendors.map((item) => (
-                    <button
-                      className="btn btn-secondary m-1"
-                      onClick={() => {
-                        this.changeVendor(item);
-                      }}
-                    >
-                      {item["value"]["name"]}
-                    </button>
-                  ))
+                  this.state.vendors.map((item) => (  <button
+                        className="btn btn-primary m-1"
+                        
+                      >
+                        {item["value"]["name"]}
+                      </button>)
+                    
+    )
                 }
               </div>
               {/* -----Veg/Non Veg here----- */}
@@ -620,7 +637,7 @@ class AddItems extends Component {
               </div>
             </div>
             {/* -----Add Vendors----- */}
-            <div className="card-body col-12">
+           {/* <div className="card-body col-12">
               <h3>Add Vendor</h3>
               <div className="btn-group col-12 mx-0 px-0">
                 <input
@@ -637,12 +654,13 @@ class AddItems extends Component {
                   Add Vendor
                 </button>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
         <div className="col-4" id="addOtherInterface"></div>
       </div>
     );
+   
   }
 }
 
