@@ -104,7 +104,7 @@ class App extends Component {
               
             </Route>
             <Route path="/vendorcart">
-            {(this.state.username!=null)?<Vendorcartpage vendor={this.state.vendor} username={this.state.username}/>:<Login/>}
+            {(this.state.userData!=null)?<Vendorcartpage vendor={this.state.vendor} username={this.state.username}/>:<Login/>}
             </Route>
             <Route path="/">
             {(this.state.userData!=null)?<Vendorcartpage vendor={this.state.vendor} username={this.state.username}/>:<Login/>}
