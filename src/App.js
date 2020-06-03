@@ -100,14 +100,14 @@ class App extends Component {
               <SignUp />
             </Route>
             <Route path="/AddItems">
-              {(this.state.username)?<AddItems user={this.state.userData} username={this.state.username}/>:<div>Loading...</div>}
-              
+              {(this.state.username) ? <AddItems user={this.state.userData} username={this.state.username} /> : <div>Loading...</div>}
+
             </Route>
             <Route path="/vendorcart">
               <Vendorcartpage vendor={this.state.vendor} />
             </Route>
             <Route path="/">
-                <Login />
+              <Login />
             </Route>
           </Switch> </div>
       </Router>);

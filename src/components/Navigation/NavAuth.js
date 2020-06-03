@@ -14,8 +14,11 @@ class NavAuth extends Component {
         return (
             <div>
                 <Link
-                    to={location}>
-                    <button className="btn btn-dark ">{this.props.username}</button>
+                    to="/vendorcart" className="btn btn-dark ">{this.props.username}
+                </Link>
+                <Link
+                    to="/AddItems"
+                 className="btn btn-dark ">Manage Items
                 </Link>
                 <SignOut />
 

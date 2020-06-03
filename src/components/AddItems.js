@@ -291,6 +291,7 @@ class AddItems extends Component {
   };
   sendItem = () => {
     var name = document.getElementById("itemName").value;
+    var time = document.getElementById("estimatedTime").value;
     var vendor = this.state.selectedVendor;
     var veg = document.getElementById("veg").checked;
     var categories = this.state.selectedCategories;
@@ -303,6 +304,7 @@ class AddItems extends Component {
         prices[sizes[i]["id"]] = {
           size: sizes[i]["value"],
           price: document.getElementById(sizes[i]["value"]).value,
+          //enabled:true
         };
       }
 
@@ -312,10 +314,12 @@ class AddItems extends Component {
       }
       var itemData = {
         name: name,
+        time:time,
         veg: veg,
         vendor: vendor,
         price: prices,
         menuCategories: menuCategories,
+        enabled:true
       };
       console.log(itemData);
       var key = this.props.firebase.db.ref().child("public/items").push().key;
@@ -345,7 +349,7 @@ class AddItems extends Component {
               <h3 className="card-title py-0 my-0">Menu Items</h3>
 
               <div className="d-flex">
-                <div className="col-4">Name</div>
+                <div className="col-3">Name</div>
                 <div className="col-2">Vendor</div>
                 <div className="col-3">Categories</div>
                 <div className="col-3">sizes</div>
@@ -365,6 +369,27 @@ class AddItems extends Component {
                         >
                           Delete
                         </button>
+                        {this.state.items[item]["value"].enabled?
+                        <button
+                          className="bg-danger rounded px-2 border text-white"
+                          onClick={() => {
+                            var update = {}
+                            update["public/items/"+this.state.items[item]["id"]+"/enabled"]=false
+                            return this.props.firebase.db.ref().update(update);
+                          }}
+                        >
+                          Hold Sale
+                        </button>:
+                        <button
+                          className="bg-primary rounded px-2 border text-white"
+                          onClick={() => {
+                            var update = {}
+                            update["public/items/"+this.state.items[item]["id"]+"/enabled"]=true
+                            return this.props.firebase.db.ref().update(update);
+                          }}
+                        >
+                          Resume Sale
+                        </button>}
                       </div>
                       <div className="col-2">
                         {this.state.items[item]["value"]["vendor"]}
@@ -495,6 +520,16 @@ class AddItems extends Component {
                   id="itemName"
                   type="text"
                   placeholder="Name of item..."
+                ></input>
+              </div>
+               {/* -----Time here----- */}
+               <div className="border-top mt-2">
+                <div className="font-weight-bold">Estimated Time</div>
+                <input
+                  className="col-12"
+                  id="estimatedTime"
+                  type="text"
+                  placeholder="Estimated time to prepare..."
                 ></input>
               </div>
               {/* -----vendors here----- */}
