@@ -53,8 +53,9 @@ class App extends Component {
   };
   componentDidUpdate() {
     //console.log(this.state.userData.email);
-
+   // console.log(this.state.username);
     this.fetchUserName();
+    this.fetchUserData();
     //console.log(this.props.firebase.auth.username);
   }
   componentDidMount() {
@@ -78,7 +79,8 @@ class App extends Component {
                 <AddBalance />
               </Route>
               <Route path="/">
-                <Login />
+              {(this.state.userData!=null)?<AddBalance/>:<Login/>}
+              
               </Route>
             </Switch>
 
@@ -100,7 +102,7 @@ class App extends Component {
               <SignUp />
             </Route>
             <Route path="/AddItems">
-              {(this.state.username!=null)?<AddItems user={this.state.userData} username={this.state.username}/>:<div>Loading...</div>}
+              {(this.state.username!=null)?<AddItems user={this.state.userData} username={this.state.username}/>:<div>Loading..</div>}
               
             </Route>
             <Route path="/vendorcart">

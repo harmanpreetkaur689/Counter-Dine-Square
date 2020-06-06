@@ -349,7 +349,7 @@ class AddItems extends Component {
               <h3 className="card-title py-0 my-0">Menu Items</h3>
 
               <div className="d-flex">
-                <div className="col-3">Name</div>
+                <div className="col-4">Name</div>
                 <div className="col-2">Vendor</div>
                 <div className="col-3">Categories</div>
                 <div className="col-3">sizes</div>

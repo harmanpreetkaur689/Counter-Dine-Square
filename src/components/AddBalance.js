@@ -111,7 +111,7 @@ class AddBalance extends Component{
         
                 </div>
                 <div>
-                    <div className="btn btn-primary" onClick={() => { this.fetchDetails() }}>Show details</div>
+                    {/*<div className="btn btn-primary" onClick={() => { this.fetchDetails() }}>Show details</div>*/}
                 </div>
                 </div>
                 <div class="row ">
