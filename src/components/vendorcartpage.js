@@ -7,7 +7,10 @@ class Vendorcartpage extends Component {
         display: null,
         data: null,
         items: null,
-        vendor: null
+        vendor: null,
+        orderVerified: false,
+        vendors: null,
+        inputs:{}
     };
     componentDidUpdate() {
         // this.filter()
@@ -22,7 +25,7 @@ class Vendorcartpage extends Component {
             //return
         }
 
-        if (this.state.data == null && this.state.vendor!=null) {
+        if (this.state.data == null && this.state.vendor) {
             this.fetchCart()
             //return
         }
@@ -30,18 +33,24 @@ class Vendorcartpage extends Component {
              this.fetchItems()
              //return
          }*/
-
     }
     componentDidMount() {
         if (this.state.vendor == null) {
             this.setState({ vendor: this.props.vendor });
         }
         this.fetchItems()
+        this.fetchVendors();
+    }
+    fetchVendors() {
+        this.props.firebase.db.ref("public/vendors").once("value")
+            .then((snapshot) => {
+                this.setState({ vendors: snapshot.val() })
+            })
     }
     fetchCart = () => {
-        console.log('fetch cart called')
-        var location = "vendors/" + this.state.vendor
-        this.props.firebase.db.ref(location).on("value", (snapshot) => {
+        this.props.firebase.db
+            .ref("vendors/" + this.props.vendor)
+            .on("value", (snapshot) => {
                 const item = snapshot.val();
                 console.log(item);
                 this.setState({ data: item });
@@ -57,37 +66,70 @@ class Vendorcartpage extends Component {
             });
 
     };
+    itemReady(itemKey, cartKey, priceKey, uid) {
+        var updates = {}
+        updates["/users/" + uid + "/prevorders/" + cartKey + "/items/" + itemKey + "/" + priceKey + "/ready"] = true;
+        updates["/vendors/" + this.props.vendor + "/ItemsToPrepare/" + cartKey + "/items/" + itemKey + "/" + priceKey + "/ready"] = true
+        this.props.firebase.db.ref().update(updates)
+        /*this.props.firebase.db.ref("/users/" + uid + "/prevorders/" + cartKey + "/items/" + itemKey + "/" + priceKey).set({
+            ready: true,
+            qty: this.state.data.ItemsToPrepare[cartKey].items[itemKey][priceKey]["qty"]
+        })*/
 
+    }
+    orderPickedUp(cartKey) {
+        let updates = {};
+        console.log(cartKey)
+        updates["/vendors/" + this.props.vendor + "/ItemsToPrepare/" + cartKey] = null;
+        //updates["/users/" + this.state.data.ItemsToPrepare[cartKey].userId + "/prevorders/" + cartKey + "/items/" + item]
+        {
+            Object.keys(this.state.data["ItemsToPrepare"][cartKey].items).map((itemKey) => {
+
+                {
+                    Object.keys(this.state.data["ItemsToPrepare"][cartKey].items[itemKey]).map((priceKey) => {
+                        updates["/users/" + this.state.data.ItemsToPrepare[cartKey].userId + "/prevorders/" + cartKey + "/items/" + itemKey + "/" + priceKey + "/taken"] = true
+                    })
+                }
+
+            })
+        }
+        this.props.firebase.db.ref().update(updates);
+    }
     showItems = () => {
-        if (this.state.display)
-            return (<div>
+        if (this.state.display) {
+            if(this.state.data.ItemsToPrepare)
+            return (<div >
                 <div className="row shadow bg-light rounded">
                     {Object.keys(this.state.data["ItemsToPrepare"]).map((cartKey) => (<div className="col-6 p-0 border"><div className="col-12 h5">{this.state.data["ItemsToPrepare"][cartKey].username}</div>
+
+                        <div className="btn btn-secondary">OTP: {this.state.data["ItemsToPrepare"][cartKey].otp}</div>
+                        <div className="btn btn-danger" id={cartKey + "1"} onClick={() => { this.orderPickedUp(cartKey) }}>Order Picked Up</div>
                         {Object.keys(this.state.data["ItemsToPrepare"][cartKey].items).map((itemKey) => (<div className=" col-12 bg-light">{
                             Object.keys(this.state.data.ItemsToPrepare[cartKey].items[itemKey]).map((priceKey) => (<div className="d-flex col-12">
-                                <div className="flex-grow-1">{this.state.items[itemKey].name} ( {this.state.items[itemKey].price[priceKey].size} x {this.state.data.ItemsToPrepare[cartKey].items[itemKey][priceKey].qty} )</div>
+                                <div className="flex-grow-1">{this.state.items[itemKey].name} ( {this.state.items[itemKey].price[priceKey].size} x {this.state.data.ItemsToPrepare[cartKey].items[itemKey][priceKey]["qty"]} )</div>
 
                                 <div className="d-flex">
-                                    {this.state.data.ItemsToPrepare[cartKey].items[itemKey][priceKey].ready==false?<button type="button" className="btn btn-sm btn-primary" onClick={()=>{
-                                        var updates={}
-                                        updates["users/"+this.state.data.ItemsToPrepare[cartKey].userId+"/prevorders/"+cartKey+"/items/"+itemKey+"/"+priceKey+"/ready"]=true;
-                                        updates["vendors/"+this.state.vendor+"/ItemsToPrepare/"+cartKey+"/items/"+itemKey+"/"+priceKey+"/ready"]=true;
-                                        this.props.firebase.db.ref().update(updates);
-                                    }}>
-                                        Item Ready
-                                    </button>:<button className="btn btn-success">Item completed</button>}
+                                    {this.state.data.ItemsToPrepare[cartKey].items[itemKey][priceKey].ready == true ?
+                                        (this.state.data.ItemsToPrepare[cartKey].items[itemKey][priceKey].taken == true ?
+                                            <button className="btn btn-sm btn-success">Item Picked by User</button> :
+                                            <button className="btn btn-sm btn-success">Item Ready</button>)
+                                        : <button type="button" className="btn btn-sm btn-primary" onClick={() => { this.itemReady(itemKey, cartKey, priceKey, this.state.data["ItemsToPrepare"][cartKey]["userId"]) }}>
+                                            Set Item Ready
+                                        </button>}
                                 </div>
                             </div>))}
                         </div>
                         )
                         )}</div>)
+
                     )}
                 </div>
             </div >)
+            else return <div>Nothing to show</div>
+        }//chll reha
     }
 
     render() {
-        
         return (
             <div class="container ">
                 {/* <div>
@@ -110,10 +152,6 @@ class Vendorcartpage extends Component {
                 </div>
             </div >
         );
-        
-        
-       
-        
     }
 }
 

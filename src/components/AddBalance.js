@@ -30,7 +30,7 @@ class AddBalance extends Component{
       }
     fetchDetails(){ 
         this.props.firebase.db.ref("users/")
-        .once("value")
+        .on("value")
         .then((snapshot)=>{
             const users=snapshot.val();
             this.setState({users:users});

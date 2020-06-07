@@ -32,7 +32,7 @@ class App extends Component {
       if (authUser != this.state.userData)
         authUser
           ? this.setState({ userData: authUser })
-          : this.setState({ userData: null });
+          : this.setState({ userData: null,username:null,vendor:null });
     });
   };
   fetchUserName = () => {
