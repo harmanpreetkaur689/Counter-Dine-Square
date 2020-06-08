@@ -30,7 +30,7 @@ class AddBalance extends Component{
       }
     fetchDetails(){ 
         this.props.firebase.db.ref("users/")
-        .on("value")
+        .once("value")
         .then((snapshot)=>{
             const users=snapshot.val();
             this.setState({users:users});
@@ -83,7 +83,12 @@ class AddBalance extends Component{
             return (
                 <div class="modal fade  " id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" keyboard="false">
                     <div class="modal-dialog modal-dialog-centered " role="document">
+                    
                         <div class="modal-content">
+                        <div class="modal-header">
+                                    
+                        <div><h5>{this.state.activeKey!=null?<div>{this.state.users[this.state.activeKey]["email"]}</div>:<div></div>}</h5></div>
+                        </div>
                             <div class="modal-body">
                             <input  id="bal" placeholder="Enter balance" class="col-12 my-2"  /> 
                             </div>
